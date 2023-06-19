@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+  redis:
+    image: redis
+    restart: always
+
+  webapp:
+    restart: always
+    build:
+      context: ./webapp
+    ports:
+      - "8000:8000"
+    command: [ "python3", "./webapp/src/weather_project/manage.py", "runserver", "0.0.0.0:8000"]
+
+  worker:
+    restart: always
+    build:
+      context: ./webapp
+    command: [ 'celery', '--workdir=./src', '-A', 'src/weather_project/weather_project', 'worker' ]
+
+  celery-beats:
+    restart: always
+    build:
+      context: ./webapp
+    volumes:
+      - ./db:/app/src/db
+    command: [ 'celery', '--workdir=./src', '-A', 'src/weather_project/weather_project', 'beat', '-l', 'INFO', '--scheduler', 'django_celery_beat.schedulers:DatabaseScheduler' ]
