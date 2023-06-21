@@ -11,7 +11,7 @@ services:
       context: ./webapp
     ports:
       - "8000:8000"
-    command: [ "python3", "./webapp/src/weather_project/manage.py", "runserver", "0.0.0.0:8000"]
+    command: [ "python3", "src/weather_project/manage.py", "runserver", "0.0.0.0:8000"]
 
   worker:
     restart: always
